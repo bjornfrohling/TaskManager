@@ -16,6 +16,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
     // Override point for customization after application launch.
+    
+    let dbManager = DatabaseManager()
+    dbManager.initializeCoreDataStack()
+    
+    guard let navCtrl = window?.rootViewController as? UINavigationController else {
+      fatalError("rootViewController is not a UINavigationController")
+    }
+    
+    guard let mainCtrl = navCtrl.topViewController as? MainTableViewController else {
+      fatalError("topViewController is not a MainTableViewController")
+    }
+    mainCtrl.managedObjectContext = dbManager.managedObjectContext
+    
     return true
   }
 
