@@ -13,7 +13,8 @@ class MainTableViewController: UITableViewController, TaskListDataProviderDelega
 
   var managedObjectContext: NSManagedObjectContext!
   var taskListDataProvider: TaskListDataProvider!
-  var dataSource: TaskListDataSource!
+  var dataSource: TableViewDataSource<TaskList, UITableViewCell>!
+  var fetchedResultsProvider: FetchedResultsProvider<TaskList>!
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -22,9 +23,12 @@ class MainTableViewController: UITableViewController, TaskListDataProviderDelega
   }
 
   func populateList() {
+    fetchedResultsProvider = FetchedResultsProvider(managedObjectContext)
     taskListDataProvider = TaskListDataProvider(self.managedObjectContext)
     taskListDataProvider.delegate = self
-    dataSource = TaskListDataSource(taskListDataProvider)
+    dataSource = TableViewDataSource(cellIdentifier: "Cell", provider: fetchedResultsProvider) { cell, model in
+      cell.textLabel?.text = model.title
+    }
     tableView.dataSource = dataSource
   }
 

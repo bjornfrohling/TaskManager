@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-protocol TaskListDataProviderDelegate {
+protocol TaskListDataProviderDelegate: class {
   func insertRows(at index: IndexPath)
   func removeRows(at index: IndexPath)
 }
@@ -19,7 +19,7 @@ class TaskListDataProvider: NSObject, NSFetchedResultsControllerDelegate {
   var fetchResultsController: NSFetchedResultsController<TaskList>!
   var sections: [NSFetchedResultsSectionInfo]? { get { return self.fetchResultsController.sections } }
   var managedObjectContext: NSManagedObjectContext!
-  var delegate: TaskListDataProviderDelegate!
+  weak var delegate: TaskListDataProviderDelegate!
 
   init(_ managedObjectContext: NSManagedObjectContext) {
     super.init()
