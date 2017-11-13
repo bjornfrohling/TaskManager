@@ -9,16 +9,20 @@
 import UIKit
 import CoreData
 
-class TableViewDataSource<Model: NSManagedObject, Cell: UITableViewCell>: NSObject, UITableViewDataSource where Model: ManagedObjectType {
+class TableViewDataSource<Model: NSManagedObject, Cell: UITableViewCell>: NSObject, UITableViewDataSource, FetchedResultsProviderDelegate where Model: ManagedObjectType {
 
   var cellIdentifier: String!
+  var tableView :UITableView!
   var fetchedResultsProvider: FetchedResultsProvider<Model>!
   var populateCellClosure: (Cell, Model) -> ()
-
-  init(cellIdentifier: String, provider: FetchedResultsProvider<Model>, cellClosure: @escaping (Cell, Model) -> ()) {
+  
+  init(cellIdentifier: String, tableView: UITableView, provider: FetchedResultsProvider<Model>, cellClosure: @escaping (Cell, Model) -> ()) {
+    self.tableView = tableView
     self.cellIdentifier = cellIdentifier
     self.fetchedResultsProvider = provider
     self.populateCellClosure = cellClosure
+    super.init()
+    self.fetchedResultsProvider.delegate = self
   }
 
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -39,4 +43,11 @@ class TableViewDataSource<Model: NSManagedObject, Cell: UITableViewCell>: NSObje
     return cell
   }
 
+  func insertRows(at index: IndexPath) {
+    self.tableView.insertRows(at: [index], with: .automatic)
+  }
+  
+  func removeRows(at index: IndexPath) {
+    self.tableView.deleteRows(at: [index], with: .automatic)
+  }
 }

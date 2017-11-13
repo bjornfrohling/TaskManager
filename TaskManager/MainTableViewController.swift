@@ -9,10 +9,9 @@
 import UIKit
 import CoreData
 
-class MainTableViewController: UITableViewController, TaskListDataProviderDelegate {
+class MainTableViewController: UITableViewController {
 
   var managedObjectContext: NSManagedObjectContext!
-  var taskListDataProvider: TaskListDataProvider!
   var dataSource: TableViewDataSource<TaskList, UITableViewCell>!
   var fetchedResultsProvider: FetchedResultsProvider<TaskList>!
 
@@ -23,18 +22,11 @@ class MainTableViewController: UITableViewController, TaskListDataProviderDelega
   }
 
   func populateList() {
-    fetchedResultsProvider = FetchedResultsProvider(managedObjectContext)
-    taskListDataProvider = TaskListDataProvider(self.managedObjectContext)
-    taskListDataProvider.delegate = self
-    dataSource = TableViewDataSource(cellIdentifier: "Cell", provider: fetchedResultsProvider) { cell, model in
+    self.fetchedResultsProvider = FetchedResultsProvider(managedObjectContext)
+    self.dataSource = TableViewDataSource(cellIdentifier: "Cell", tableView: self.tableView, provider: fetchedResultsProvider) { cell, model in
       cell.textLabel?.text = model.title
     }
-    tableView.dataSource = dataSource
-  }
-
-  override func didReceiveMemoryWarning() {
-    super.didReceiveMemoryWarning()
-    // Dispose of any resources that can be recreated.
+    tableView.dataSource = self.dataSource
   }
 
   override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -54,14 +46,6 @@ class MainTableViewController: UITableViewController, TaskListDataProviderDelega
 
   override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
     return 44
-  }
-
-  func insertRows(at index: IndexPath) {
-    self.tableView.insertRows(at: [index], with: .automatic)
-  }
-
-  func removeRows(at index: IndexPath) {
-    self.tableView.deleteRows(at: [index], with: .automatic)
   }
 
 }
